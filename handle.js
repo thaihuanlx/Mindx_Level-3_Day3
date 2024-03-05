@@ -1,91 +1,83 @@
-let users = [];
-let posts = [];
-let comments = [];
+import axios from "axios";
 
-// Hàm tạo userId ngẫu nhiên
-function generateUserId() {
-  return "US" + Math.floor(1000 + Math.random() * 9000);
-}
+const BASE_URL = "http://localhost:3000";
 
-// Hàm tạo postId và commentId ngẫu nhiên
-function generateId() {
-  return Math.random().toString(36).substr(2, 5);
-}
+// Đăng ký user
+export const registerUser = async (userName) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/register`, { userName });
+    return response.data;
+  } catch (error) {
+    console.error("Error registering user:", error.response.data);
+    throw error.response.data;
+  }
+};
 
-// Hàm tạo user mới
-export function createUser(userName) {
-  const userId = generateUserId();
-  const newUser = { userId, userName };
-  users.push(newUser);
-  return newUser;
-}
+// Tạo bài post
+export const createPost = async (userId, title, content) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/posts`, {
+      userId,
+      title,
+      content,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error creating post:", error.response.data);
+    throw error.response.data;
+  }
+};
 
-// Hàm tạo bài post mới
-export function createPost(userId, content) {
-  const postId = generateId();
-  const newPost = { postId, userId, content, comments: [] };
-  posts.push(newPost);
-  return newPost;
-}
+// Chỉnh sửa bài post
+export const editPost = async (postId, userId, title, content) => {
+  try {
+    const response = await axios.put(`${BASE_URL}/posts/${postId}`, {
+      userId,
+      title,
+      content,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error editing post:", error.response.data);
+    throw error.response.data;
+  }
+};
 
-// Hàm chỉnh sửa bài post
-export function editPost(postId, userId, content) {
-  const postIndex = posts.findIndex((post) => post.postId === postId);
-  if (postIndex !== -1 && posts[postIndex].userId === userId) {
-    posts[postIndex].content = content;
-    return posts[postIndex];
-  } else {
-    throw new Error(
-      "Không tìm thấy bài post hoặc bạn không có quyền chỉnh sửa"
+// Comment vào bài post
+export const addCommentToPost = async (postId, userId, content) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/posts/${postId}/comments`, {
+      userId,
+      content,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error adding comment:", error.response.data);
+    throw error.response.data;
+  }
+};
+
+// Chỉnh sửa comment
+export const editComment = async (postId, commentId, userId, content) => {
+  try {
+    const response = await axios.put(
+      `${BASE_URL}/posts/${postId}/comments/${commentId}`,
+      { userId, content }
     );
+    return response.data;
+  } catch (error) {
+    console.error("Error editing comment:", error.response.data);
+    throw error.response.data;
   }
-}
+};
 
-// Hàm tạo comment mới
-export function createComment(userId, postId, content) {
-  const commentId = generateId();
-  const newComment = { commentId, userId, postId, content };
-  comments.push(newComment);
-  const postIndex = posts.findIndex((post) => post.postId === postId);
-  if (postIndex !== -1) {
-    posts[postIndex].comments.push(newComment);
+// Lấy tất cả comment của một bài post
+export const getCommentsForPost = async (postId) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/posts/${postId}/comments`);
+    return response.data;
+  } catch (error) {
+    console.error("Error getting comments for post:", error.response.data);
+    throw error.response.data;
   }
-  return newComment;
-}
-
-// Hàm chỉnh sửa comment
-export function editComment(commentId, userId, content) {
-  const commentIndex = comments.findIndex(
-    (comment) => comment.commentId === commentId
-  );
-  if (commentIndex !== -1 && comments[commentIndex].userId === userId) {
-    comments[commentIndex].content = content;
-    return comments[commentIndex];
-  } else {
-    throw new Error("Không tìm thấy comment hoặc bạn không có quyền chỉnh sửa");
-  }
-}
-
-// Hàm lấy tất cả comment của một bài post
-export function getAllCommentsForPost(postId) {
-  return comments.filter((comment) => comment.postId === postId);
-}
-
-// Hàm lấy tất cả các bài post và 3 comment đầu của tất cả user
-export function getAllPosts() {
-  return posts.map((post) => ({
-    ...post,
-    comments: post.comments.slice(0, 3), // Chỉ lấy 3 comment đầu
-  }));
-}
-
-// Hàm lấy một bài post và tất cả comment của bài post đó thông qua postId
-export function getPostWithComments(postId) {
-  const post = posts.find((post) => post.postId === postId);
-  if (post) {
-    const postComments = getAllCommentsForPost(postId);
-    return { post, comments: postComments };
-  } else {
-    throw new Error("Không tìm thấy bài post");
-  }
-}
+};
