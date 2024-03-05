@@ -5,7 +5,7 @@ const BASE_URL = "http://localhost:3000";
 // Đăng ký user
 export const registerUser = async (userName) => {
   try {
-    const response = await axios.post(`${BASE_URL}/register`, { userName });
+    const response = await axios.post(`${BASE_URL}/users`, { userName });
     return response.data;
   } catch (error) {
     console.error("Error registering user:", error.response.data);
