@@ -1,17 +1,24 @@
-import express from "express";
-import bodyParser from "body-parser";
+// import express from "express";
+// import bodyParser from "body-parser";
+// import { v4 as uuidv4 } from "uuid";
+// import { jsonServer } from "json-server";
+
+// const app = express();
+import jsonServer from "json-server";
 import { v4 as uuidv4 } from "uuid";
 
-const app = express();
+const app = jsonServer.create();
+
+app.use(jsonServer.bodyParser);
 const PORT = 3000;
 
-app.use(bodyParser.json());
+// app.use(bodyParser.json());
 
 let users = [];
 let posts = [];
 
 // Đăng ký user
-app.post("/register", (req, res) => {
+app.post("/users", (req, res) => {
   const { userName } = req.body;
   const id = "US" + uuidv4().substring(0, 4);
 
@@ -19,7 +26,7 @@ app.post("/register", (req, res) => {
     return res.status(400).json({ error: "User already exists" });
   }
 
-  users.push({ id, userName });
+  db.users.push({ id, userName });
   res.status(201).json({ id, userName });
 });
 
