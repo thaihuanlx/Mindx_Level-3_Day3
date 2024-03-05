@@ -14,11 +14,11 @@ export const registerUser = async (userName) => {
 };
 
 // Tạo bài post
-export const createPost = async (userId, title, content) => {
+export const createPost = async (id, authorid, content) => {
   try {
     const response = await axios.post(`${BASE_URL}/posts`, {
-      userId,
-      title,
+      id,
+      authorid,
       content,
     });
     return response.data;
@@ -29,11 +29,11 @@ export const createPost = async (userId, title, content) => {
 };
 
 // Chỉnh sửa bài post
-export const editPost = async (postId, userId, title, content) => {
+export const editPost = async (postId, id, authorid, content) => {
   try {
     const response = await axios.put(`${BASE_URL}/posts/${postId}`, {
-      userId,
-      title,
+      id,
+      authorid,
       content,
     });
     return response.data;
@@ -44,10 +44,10 @@ export const editPost = async (postId, userId, title, content) => {
 };
 
 // Comment vào bài post
-export const addCommentToPost = async (postId, userId, content) => {
+export const addCommentToPost = async (postId, id, content) => {
   try {
     const response = await axios.post(`${BASE_URL}/posts/${postId}/comments`, {
-      userId,
+      id,
       content,
     });
     return response.data;
@@ -58,11 +58,11 @@ export const addCommentToPost = async (postId, userId, content) => {
 };
 
 // Chỉnh sửa comment
-export const editComment = async (postId, commentId, userId, content) => {
+export const editComment = async (postId, commentId, id, content) => {
   try {
     const response = await axios.put(
       `${BASE_URL}/posts/${postId}/comments/${commentId}`,
-      { userId, content }
+      { id, content }
     );
     return response.data;
   } catch (error) {
