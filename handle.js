@@ -1,5 +1,16 @@
 let users = [];
 let posts = [];
+let userCache = {};
+
+// Hàm lấy thông tin user từ cache
+export const getUserFromCache = (userId) => {
+  return userCache[userId];
+};
+
+// Hàm lấy danh sách user từ cache
+export const getAllUsersFromCache = () => {
+  return Object.values(userCache);
+};
 
 // Hàm sinh id ngẫu nhiên
 const generateId = () => {
@@ -12,6 +23,7 @@ export const createUser = (userName) => {
   const id = generateId();
   const user = { id, userName };
   users.push(user);
+  userCache[id] = user;
   return user;
 };
 

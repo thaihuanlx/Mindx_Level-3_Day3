@@ -8,6 +8,7 @@ import {
   getAllComments,
   getAllPosts,
   getPostWithComments,
+  getAllUsersFromCache,
 } from "./handle.js";
 
 const app = express();
@@ -20,6 +21,12 @@ app.post("/users", (req, res) => {
   const { userName } = req.body;
   const user = createUser(userName);
   res.json(user);
+});
+
+// Lấy danh sách user từ cache
+app.get("/users", (req, res) => {
+  const userList = getAllUsersFromCache(userCache);
+  res.json(userList);
 });
 
 // Tạo bài post
