@@ -1,32 +1,26 @@
 import express from "express";
+import bodyParser from "body-parser";
 import {
   createUser,
   createPost,
   editPost,
   createComment,
   editComment,
-  getAllComments,
+  getAllCommentsForPost,
   getAllPosts,
   getPostWithComments,
-  getAllUsersFromCache,
 } from "./handle.js";
 
 const app = express();
 const PORT = 3000;
 
-app.use(express.json());
+app.use(bodyParser.json());
 
 // Đăng ký user
 app.post("/users", (req, res) => {
   const { userName } = req.body;
   const user = createUser(userName);
   res.json(user);
-});
-
-// Lấy danh sách user từ cache
-app.get("/users", (req, res) => {
-  const userList = getAllUsersFromCache(userCache);
-  res.json(userList);
 });
 
 // Tạo bài post
@@ -40,15 +34,14 @@ app.post("/posts", (req, res) => {
 app.put("/posts/:postId", (req, res) => {
   const { postId } = req.params;
   const { userId, content } = req.body;
-  const post = editPost(postId, userId, content);
-  res.json(post);
+  const updatedPost = editPost(postId, userId, content);
+  res.json(updatedPost);
 });
 
 // Comment vào bài post
-app.post("/posts/:postId/comments", (req, res) => {
-  const { postId } = req.params;
-  const { userId, content } = req.body;
-  const comment = createComment(postId, userId, content);
+app.post("/comments", (req, res) => {
+  const { userId, postId, content } = req.body;
+  const comment = createComment(userId, postId, content);
   res.json(comment);
 });
 
@@ -56,14 +49,14 @@ app.post("/posts/:postId/comments", (req, res) => {
 app.put("/comments/:commentId", (req, res) => {
   const { commentId } = req.params;
   const { userId, content } = req.body;
-  const comment = editComment(commentId, userId, content);
-  res.json(comment);
+  const updatedComment = editComment(commentId, userId, content);
+  res.json(updatedComment);
 });
 
 // Lấy tất cả comment của một bài post
 app.get("/posts/:postId/comments", (req, res) => {
   const { postId } = req.params;
-  const comments = getAllComments(postId);
+  const comments = getAllCommentsForPost(postId);
   res.json(comments);
 });
 
